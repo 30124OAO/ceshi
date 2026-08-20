@@ -1,0 +1,56 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- ScreenGui，角色复活不会销毁
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "QuickBtnGui"
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false -- 复活不消失
+ScreenGui.Parent = PlayerGui
+
+-- 快捷按钮
+local QuickBtn = Instance.new("TextButton")
+QuickBtn.Name = "快捷按钮"
+QuickBtn.Size = UDim2.new(0,120,0,40)
+QuickBtn.Position = UDim2.new(0.01,0,0.01,0)
+QuickBtn.BackgroundColor3 = Color3.fromRGB(40,120,220)
+QuickBtn.Text = "点击执行"
+QuickBtn.TextColor3 = Color3.new(1,1,1)
+QuickBtn.Font = Enum.Font.SourceSans
+QuickBtn.TextSize = 16
+QuickBtn.AutoLocalize = false
+QuickBtn.Parent = ScreenGui
+
+-- 拖动变量
+local dragging = false
+local dragStart
+local startPos
+
+QuickBtn.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = QuickBtn.Position
+	end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		QuickBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+-- 点击事件（在这里写你要运行的代码）
+QuickBtn.MouseButton1Click:Connect(function()
+	print("快捷按钮被点击！")
+	-- 把你的功能代码写这下面
+
+end)
